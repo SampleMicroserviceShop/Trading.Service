@@ -4,6 +4,12 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<PackageDescription>Sample Microservice Shop Trading microservice.</PackageDescription>
+	<Authors>MH Karami</Authors>
+	<Company>SampleMicroserviceShop</Company>
+	<RepositoryUrl>
+		https://github.com/SampleMicroserviceShop/Trading.Service
+	</RepositoryUrl>
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Identity.Contracts" Version="1.0.1" />
