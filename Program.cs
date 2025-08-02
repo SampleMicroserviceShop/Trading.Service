@@ -45,8 +45,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
     app.UseCors(_builder =>
     {
         _builder.WithOrigins(builder.Configuration[AllowedOriginSetting])
@@ -59,13 +57,24 @@ if (app.Environment.IsDevelopment())
 }
 // Configure the HTTP request pipeline.
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax
+});
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.MapHub<MessageHub>("/messagehub");
 
 app.Run();

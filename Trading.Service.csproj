@@ -10,16 +10,20 @@
 	<RepositoryUrl>
 		https://github.com/SampleMicroserviceShop/Trading.Service
 	</RepositoryUrl>
+	<UserSecretsId>d4c50ba8-bdcd-49b7-8d31-c6ce78ef3f76</UserSecretsId>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Identity.Contracts" Version="1.0.1" />
-		<PackageReference Include="Inventory.Contracts" Version="1.0.1" />
+		<PackageReference Include="Identity.Contracts" Version="1.0.2" />
+		<PackageReference Include="Inventory.Contracts" Version="1.0.2" />
 		<PackageReference Include="MassTransit" Version="7.3.1" />
 		<PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
 		<PackageReference Include="MassTransit.MongoDB" Version="7.3.1" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="7.3.1" />
-		<PackageReference Include="Catalog.Contracts" Version="1.0.1" />
-		<PackageReference Include="Common.library" Version="1.0.5" />
+		<PackageReference Include="Catalog.Contracts" Version="1.0.2" />
+		<PackageReference Include="Common.library" Version="1.0.6" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
 		<PackageReference Include="MongoDB.Driver" Version="2.30.0" />
 
