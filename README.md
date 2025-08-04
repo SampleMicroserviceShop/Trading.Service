@@ -1,4 +1,4 @@
-## Trading.Microservice
+# Trading.Microservice
 Sample Microservice Shop Trading microservice.
 
 ## General Variables
@@ -8,6 +8,7 @@ $owner="SampleMicroserviceShop"
 $gh_pat="[PAT HERE]"
 $cosmosDbConnString="[CONN STRING HERE]"
 $serviceBusConnString="[CONN STRING HERE]"
+$appname="MicroserviceShop"
 ```
 
 
@@ -31,6 +32,10 @@ $env:GH_OWNER="SampleMicroserviceShop"s
 $env:GH_PAT="[PAT HERE]"
 docker build --secret id=GH_OWNER --secret id=GH_PAT -t trading.service:$version .
 ```
+or with Azure Container Registry tag
+```
+docker build --secret id=GH_OWNER --secret id=GH_PAT -t "$appname.azurecr.io/trading.service:$version"
+```
 
 ## Run the docker image
 ```powershell
@@ -44,3 +49,13 @@ docker run -it --rm -p 5006:5006 --name trading -e MongoDbSettings__ConnectionSt
 --network infra_default trading.service:$version
 ```
 
+## Retag docker image to publish to Azure Container Registry
+```powershell
+docker tag trading.service:$version "$appname.azurecr.io/trading.service:$version"
+```
+
+## Publish the docker image to Azure Container Registry
+```powershell
+az acr login --name $appname
+docker push "$appname.azurecr.io/trading.service:$version"
+```
