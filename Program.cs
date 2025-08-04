@@ -82,7 +82,7 @@ void AddMassTransit(IServiceCollection services)
 {
     services.AddMassTransit(configure =>
     {
-        configure.UsingCustomRabbitMQ(retryConfigurator =>
+        configure.UsingCustomMessageBroker(builder.Configuration, retryConfigurator =>
         {
             retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
             retryConfigurator.Ignore(typeof(UnknownItemException));
