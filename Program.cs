@@ -10,6 +10,7 @@ using Inventory.Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
 using System.Reflection;
+using Common.Library.HealthChecks;
 using Trading.Service.Entities;
 using Trading.Service.Exceptions;
 using Trading.Service.Settings;
@@ -38,6 +39,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>()
 .AddSingleton<MessageHub>()
 .AddSignalR();
+builder.Services.AddHealthChecks()
+    .AddMongoDbHealthCheck();
 
 
 var app = builder.Build();
@@ -68,6 +71,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapCustomHealthChecks();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
 {
