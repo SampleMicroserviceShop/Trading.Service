@@ -16,9 +16,13 @@ using Trading.Service.Exceptions;
 using Trading.Service.Settings;
 using Trading.Service.SignalR;
 using Trading.Service.StateMachines;
+using Common.Library.Configuration;
+
+const string AllowedOriginSetting = "AllowedOrigin";
 
 var builder = WebApplication.CreateBuilder(args);
-const string AllowedOriginSetting = "AllowedOrigin";
+builder.Configuration.ConfigureAzureKeyVault(builder.Environment);
+
 
 // Add services to the container.
 var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
@@ -60,11 +64,7 @@ if (app.Environment.IsDevelopment())
 }
 // Configure the HTTP request pipeline.
 
-//app.UseHttpsRedirection();
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.Lax
-});
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
