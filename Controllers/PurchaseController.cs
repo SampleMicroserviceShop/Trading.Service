@@ -37,7 +37,7 @@ public class PurchaseController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PostAsync(SubmitPurchaseDto purchase)
     {
-        var userId = User.FindFirstValue("sub");
+        var userId = User.FindFirstValue(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub);
         var message = new PurchaseRequested(
         Guid.Parse(userId),
         purchase.ItemId.Value,

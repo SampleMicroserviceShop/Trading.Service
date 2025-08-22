@@ -3,7 +3,7 @@ Sample Microservice Shop Trading microservice.
 
 ## General Variables
 ```powershell
-$version="1.0.2"
+$version="1.0.6"
 $owner="SampleMicroserviceShop"
 $gh_pat="[PAT HERE]"
 $cosmosDbConnString="[CONN STRING HERE]"
@@ -29,7 +29,7 @@ dotnet nuget push ..\..\packages\$owner\Trading.Service.$version.nupkg --api-key
 
 ## Build the docker image
 ```powershell
-$env:GH_OWNER="SampleMicroserviceShop"s
+$env:GH_OWNER="SampleMicroserviceShop"
 $env:GH_PAT="[PAT HERE]"
 docker build --secret id=GH_OWNER --secret id=GH_PAT -t trading.service:$version .
 ```
@@ -72,6 +72,7 @@ kubectl apply -f .\Kubernetes\$namespace.yaml -n $namespace
 ```
 other useful commands
 ```powershell
+kubectl rollout restart deployment/trading-deployment -n trading
 kubectl get pods -n $namespace -w
 kubectl get services -n $namespace
 kubectl logs [POD_NAME] -n $namespace -c $namespace

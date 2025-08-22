@@ -4,6 +4,7 @@ using MassTransit;
 using Trading.Service.Activities;
 using Identity.Contracts;
 using Trading.Service.SignalR;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Trading.Service.StateMachines;
 
@@ -20,10 +21,10 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
     public Event<Fault<GrantItems>> GrantItemsFaulted { get; }
     public Event<Fault<DebitGil>> DebitGilFaulted { get; }
 
-    private readonly MessageHub hub;
+    private readonly IHubContext<MessageHub> hubContext;
 
 
-    public PurchaseStateMachine(MessageHub hub)
+    public PurchaseStateMachine(IHubContext<MessageHub> hubContext)
     {
         InstanceState(state => state.CurrentState);
         ConfigureEvents();
@@ -33,7 +34,7 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
         ConfigureItemsGranted();
         ConfigureFaulted();
         ConfigureCompleted();
-        this.hub = hub;
+        this.hubContext = hubContext;
     }
     private void ConfigureEvents()
     {
@@ -69,9 +70,9 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
             context.Instance.ErrorMessage = context.Exception.Message;
             context.Instance.LastUpdated = DateTimeOffset.UtcNow;
         })
-        .TransitionTo(Faulted))
-        .ThenAsync(async context => await hub.SendStatusAsync(context.Instance))
-        );
+        .TransitionTo(Faulted)
+        .ThenAsync(async context => await hubContext.Clients.User(context.Instance.UserId.ToString()).SendAsync("ReceivePurchaseStatus", context.Instance))
+        ));
     }
     private void ConfigureAny()
     {
@@ -103,7 +104,7 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
                 context.Instance.LastUpdated = DateTimeOffset.UtcNow;
             })
         .TransitionTo(Faulted)
-        .ThenAsync(async context => await hub.SendStatusAsync(context.Instance))
+        .ThenAsync(async context => await hubContext.Clients.User(context.Instance.UserId.ToString()).SendAsync("ReceivePurchaseStatus", context.Instance))
         );
     }
     private void ConfigureItemsGranted()
@@ -118,7 +119,7 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
             context.Instance.LastUpdated = DateTimeOffset.UtcNow;
         })
         .TransitionTo(Completed)
-         .ThenAsync(async context => await hub.SendStatusAsync(context.Instance)),
+         .ThenAsync(async context => await hubContext.Clients.User(context.Instance.UserId.ToString()).SendAsync("ReceivePurchaseStatus", context.Instance)),
             When(DebitGilFaulted)
             .Send(context => new SubtractItems(
             context.Instance.UserId,
@@ -131,7 +132,7 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
                 context.Instance.LastUpdated = DateTimeOffset.UtcNow;
             })
             .TransitionTo(Faulted)
-            .ThenAsync(async context => await hub.SendStatusAsync(context.Instance))
+            .ThenAsync(async context => await hubContext.Clients.User(context.Instance.UserId.ToString()).SendAsync("ReceivePurchaseStatus", context.Instance))
         );
     }
     private void ConfigureFaulted()

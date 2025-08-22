@@ -41,8 +41,7 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>()
-.AddSingleton<MessageHub>()
-.AddSignalR();
+    .AddSignalR();
 builder.Services.AddHealthChecks()
     .AddMongoDbHealthCheck();
 
@@ -52,16 +51,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseCors(_builder =>
-    {
-        _builder.WithOrigins(builder.Configuration[AllowedOriginSetting])
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-        //Credentials must be allowed in order for cookie-based sticky sessions to work correctly.
-    });
-
 }
+
+app.UseCors(_builder =>
+{
+    _builder.WithOrigins(builder.Configuration[AllowedOriginSetting])
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials();
+    //Credentials must be allowed in order for cookie-based sticky sessions to work correctly.
+});
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();

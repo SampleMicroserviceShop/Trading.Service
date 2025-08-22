@@ -15,7 +15,7 @@ spec:
       serviceAccountName: trading-serviceaccount
       containers:
         - name: trading
-          image: microshop.azurecr.io/trading.service:1.0.2
+          image: microshop.azurecr.io/trading.service:1.0.6
           env:
             - name: ServiceSettings__MessageBroker
               value: SERVICEBUS
