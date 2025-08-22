@@ -1,0 +1,14 @@
+microserviceName: "trading"
+
+image:
+  repository: microshop.azurecr.io/trading.service
+  tag: 1.0.6
+
+envVariables:
+  ServiceSettings__Authority : https://microshop.westus2.cloudapp.azure.com/identity-svc
+
+container:
+  port: 5006
+
+identityClientId: a0353373-dd28-492d-a585-51f141946189
+
