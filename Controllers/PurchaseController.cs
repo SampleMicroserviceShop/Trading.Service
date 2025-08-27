@@ -12,10 +12,12 @@ public class PurchaseController : ControllerBase
 {
     readonly IPublishEndpoint publishEndpoint;
     private readonly IRequestClient<GetPurchaseState> purchaseClient;
-    public PurchaseController(IPublishEndpoint publishEndpoint, IRequestClient<GetPurchaseState> purchaseClient)
+    private readonly ILogger<PurchaseController> _logger;
+    public PurchaseController(IPublishEndpoint publishEndpoint, IRequestClient<GetPurchaseState> purchaseClient, ILogger<PurchaseController> logger)
     {
         this.publishEndpoint = publishEndpoint;
         this.purchaseClient = purchaseClient;
+        _logger = logger;
     }
     [HttpGet("status/{idempotencyId}")]
     public async Task<ActionResult<PurchaseDto>> GetStatusAsync(Guid idempotencyId)
@@ -38,6 +40,14 @@ public class PurchaseController : ControllerBase
     public async Task<IActionResult> PostAsync(SubmitPurchaseDto purchase)
     {
         var userId = User.FindFirstValue(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub);
+        _logger.LogInformation("Received purchase request of item " + purchase.ItemId + " from user " + userId);
+        _logger.LogInformation(
+                "Received purchase request of {Quantity} of item {ItemId} from user {UserId} with CorrelationId {CorrelationId}...",
+                purchase.Quantity,
+                purchase.ItemId,
+                userId,
+                purchase.IdempotencyId);
+
         var message = new PurchaseRequested(
         Guid.Parse(userId),
         purchase.ItemId.Value,

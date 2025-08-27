@@ -17,6 +17,7 @@ using Trading.Service.Settings;
 using Trading.Service.SignalR;
 using Trading.Service.StateMachines;
 using Common.Library.Configuration;
+using Common.Library.Logging;
 
 const string AllowedOriginSetting = "AllowedOrigin";
 
@@ -33,6 +34,8 @@ builder.Services.AddMongo()
 .AddJwtBearerAuthentication();
 
 AddMassTransit(builder.Services);
+
+builder.Services.AddSeqLogging(builder.Configuration);
 
 
 builder.Services.AddControllers(options =>
