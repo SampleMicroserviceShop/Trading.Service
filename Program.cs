@@ -16,6 +16,8 @@ using Trading.Service.StateMachines;
 using Common.Library.Configuration;
 using Common.Library.Logging;
 using System.Text.Json.Serialization;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 const string AllowedOriginSetting = "AllowedOrigin";
 
@@ -35,6 +37,22 @@ AddMassTransit(builder.Services);
 
 builder.Services.AddSeqLogging(builder.Configuration);
 
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+    {
+        var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings))
+            .Get<ServiceSettings>();
+
+        tracerProviderBuilder
+            .AddSource(serviceSettings.ServiceName)
+            .AddSource("MassTransit")
+            .SetResourceBuilder(
+                ResourceBuilder.CreateDefault()
+                    .AddService(serviceSettings.ServiceName))
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddConsoleExporter();
+    });
 
 builder.Services.AddControllers(options =>
 {
