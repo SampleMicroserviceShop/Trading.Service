@@ -1,13 +1,13 @@
 ﻿using Automatonymous;
 using Common.Library;
-using GreenPipes;
+using MassTransit;
 using Trading.Service.Entities;
 using Trading.Service.Exceptions;
 using Trading.Service.StateMachines;
 
 namespace Trading.Service.Activities;
 
-public class CalculatePurchaseTotalActivity : Activity<PurchaseState, PurchaseRequested>
+public class CalculatePurchaseTotalActivity : IStateMachineActivity<PurchaseState, PurchaseRequested>
 {
     private readonly IRepository<CatalogItem> repository;
     public CalculatePurchaseTotalActivity(IRepository<CatalogItem> repository)
@@ -25,22 +25,23 @@ public class CalculatePurchaseTotalActivity : Activity<PurchaseState, PurchaseRe
     }
     public async Task Execute(
     BehaviorContext<PurchaseState, PurchaseRequested> context,
-    Behavior<PurchaseState, PurchaseRequested> next)
+    IBehavior<PurchaseState, PurchaseRequested> next)
     {
-        var message = context.Data;
+        var message = context.Message;
         var item = await repository.GetAsync(message.ItemId);
         if (item == null)
         {
             throw new UnknownItemException(message.ItemId);
         }
-        context.Instance.PurchaseTotal = item.Price * message.Quantity;
-        context.Instance.LastUpdated = DateTimeOffset.UtcNow;
+        context.Saga.PurchaseTotal = item.Price * message.Quantity;
+        context.Saga.LastUpdated = DateTimeOffset.UtcNow;
         await next.Execute(context).ConfigureAwait(false);
     }
     public Task Faulted<TException>(
     BehaviorExceptionContext<PurchaseState, PurchaseRequested, TException> context,
-    Behavior<PurchaseState, PurchaseRequested> next) where TException : System.Exception
+    IBehavior<PurchaseState, PurchaseRequested> next) where TException : System.Exception
     {
         return next.Faulted(context);
     }
+
 }

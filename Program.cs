@@ -1,10 +1,7 @@
-
-
 using Common.Library.Identity;
 using Common.Library.MassTransit;
 using Common.Library.MongoDB;
 using Common.Library.Settings;
-using GreenPipes;
 using Identity.Contracts;
 using Inventory.Contracts;
 using MassTransit;
@@ -18,6 +15,7 @@ using Trading.Service.SignalR;
 using Trading.Service.StateMachines;
 using Common.Library.Configuration;
 using Common.Library.Logging;
+using System.Text.Json.Serialization;
 
 const string AllowedOriginSetting = "AllowedOrigin";
 
@@ -41,7 +39,7 @@ builder.Services.AddSeqLogging(builder.Configuration);
 builder.Services.AddControllers(options =>
 {
     options.SuppressAsyncSuffixInActionNames = false;
-});
+}).AddJsonOptions(options => options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull); ;
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>()
     .AddSignalR();
@@ -111,7 +109,7 @@ void AddMassTransit(IServiceCollection services)
     EndpointConvention.Map<GrantItems>(new Uri(queueSettings.GrantItemsQueueAddress));
     EndpointConvention.Map<DebitGil>(new Uri(queueSettings.DebitGilQueueAddress));
     EndpointConvention.Map<SubtractItems>(new Uri(queueSettings.SubtractItemsQueueAddress));
-    services.AddMassTransitHostedService();
-    services.AddGenericRequestClient();
+    //services.AddMassTransitHostedService();
+    //services.AddGenericRequestClient();
 }
 

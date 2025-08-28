@@ -1,6 +1,4 @@
-﻿using Automatonymous;
-using MassTransit;
-using MassTransit.Saga;
+﻿using MassTransit;
 
 namespace Trading.Service.StateMachines;
 
