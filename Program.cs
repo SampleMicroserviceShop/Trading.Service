@@ -17,9 +17,6 @@ using Common.Library.Configuration;
 using Common.Library.Logging;
 using System.Text.Json.Serialization;
 using Common.Library.OpenTelemetry;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using Microsoft.Extensions.Configuration;
 
 const string AllowedOriginSetting = "AllowedOrigin";
 
@@ -38,9 +35,7 @@ builder.Services.AddMongo()
 AddMassTransit(builder.Services);
 
 builder.Services.AddSeqLogging(builder.Configuration)
-    .AddTracing(builder.Configuration);
-
-
+.AddTracing(builder.Configuration);
 
 builder.Services.AddControllers(options =>
 {
@@ -59,6 +54,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 app.UseCors(_builder =>
 {
